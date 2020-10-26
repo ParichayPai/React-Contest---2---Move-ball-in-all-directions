@@ -10,42 +10,56 @@ const App = () => {
     top: "0px"
   });
 
-  React.useEffect(
-    (document.onkeydown = (event) => {
-      event = event || window.event;
+  const handleBallMovement = (event) => {
+    if (
+      event.keyCode !== 37 &&
+      event.keyCode !== 38 &&
+      event.keyCode !== 39 &&
+      event.keyCode !== 40
+    )
+      return;
 
-      if (event.keyCode === 40) {
-        setY(y + 5);
-        setBallPosition({
-          left: ballPosition.left,
-          top: y + "px"
-        });
-      } else if (event.keyCode === 38) {
-        setY(y - 5);
-        setBallPosition({
-          left: ballPosition.left,
-          top: y + "px"
-        });
-      } else if (event.keyCode === 37) {
-        setX(x - 5);
-        setBallPosition({
-          left: x + "px",
-          top: ballPosition.top
-        });
-      } else if (event.keyCode === 39) {
-        setX(x + 5);
-        setBallPosition({
-          left: x + "px",
-          top: ballPosition.top
-        });
-      }
-    })
-  );
+    let leftPos = Number(ballPosition.left.split("px")[0]);
+    let topPos = Number(ballPosition.top.split("px")[0]);
+
+    switch (event.keyCode) {
+      case 37:
+        leftPos -= 5;
+        break;
+      case 38:
+        topPos -= 5;
+        break;
+      case 39:
+        leftPos += 5;
+        break;
+      case 40:
+        topPos += 5;
+        break;
+      default:
+        break;
+    }
+
+    const newPos = {
+      left: `${leftPos}px`,
+      top: `${topPos}px`
+    };
+    setBallPosition(newPos);
+  };
+
+  React.useEffect(() => {
+    document.addEventListener("keydown", handleBallMovement);
+
+    return () => {
+      document.removeEventListener("keydown", handleBallMovement);
+    };
+  });
+
   const reset = () => {
     setRenderBall(false);
-    setX(0);
-    setY(0);
-    setBallPosition({ left: "0px", top: "0px" });
+    setBallPosition({
+      left: "0px",
+      top: "0px"
+    });
   };
   const start = () => {
     setRenderBall(true);
